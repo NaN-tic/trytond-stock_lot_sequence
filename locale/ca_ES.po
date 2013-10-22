@@ -1,0 +1,59 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:stock.lot:"
+msgid ""
+"No sequence defined for lot. You must define a sequence or enter lot's "
+"number."
+msgstr ""
+"No s'ha definit cap seqüencia pels lots. Heu de definir una seqüencia o "
+"introduir un número de lot."
+
+msgctxt "field:stock.configuration,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Seqüencia lot"
+
+msgctxt "field:stock.configuration.company,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:stock.configuration.company,create_date:"
+msgid "Create Date"
+msgstr "Data creació"
+
+msgctxt "field:stock.configuration.company,create_uid:"
+msgid "Create User"
+msgstr "Usuari creació"
+
+msgctxt "field:stock.configuration.company,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:stock.configuration.company,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Seqüencia lot"
+
+msgctxt "field:stock.configuration.company,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:stock.configuration.company,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:stock.configuration.company,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "model:ir.sequence,name:sequence_lot"
+msgid "Lot"
+msgstr "Lot"
+
+msgctxt "model:ir.sequence.type,name:sequence_type_lot"
+msgid "Lot"
+msgstr "Lot"
+
+msgctxt "model:stock.configuration.company,name:"
+msgid "Stock Company Configuration"
+msgstr "Configuració d'estoc per empresa"
