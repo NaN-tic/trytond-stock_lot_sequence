@@ -2,3 +2,5 @@
 # copyright notices and license terms.
 
 from .test_stock_lot_sequence import suite
+
+__all__ = ['suite']
