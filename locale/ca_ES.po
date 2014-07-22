@@ -10,9 +10,25 @@ msgstr ""
 "No s'ha definit cap seqüencia pels lots. Heu de definir una seqüencia o "
 "introduir un número de lot."
 
+msgctxt "field:product.category,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Seqüencia lots"
+
+msgctxt "field:product.category.company,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Seqüencia lots"
+
+msgctxt "field:product.template,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Seqüencia lots"
+
+msgctxt "field:product.template.company,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Seqüencia lots"
+
 msgctxt "field:stock.configuration,lot_sequence:"
 msgid "Lot Sequence"
-msgstr "Seqüencia lot"
+msgstr "Seqüencia lots"
 
 msgctxt "field:stock.configuration.company,company:"
 msgid "Company"
@@ -32,7 +48,7 @@ msgstr "ID"
 
 msgctxt "field:stock.configuration.company,lot_sequence:"
 msgid "Lot Sequence"
-msgstr "Seqüencia lot"
+msgstr "Seqüencia lots"
 
 msgctxt "field:stock.configuration.company,rec_name:"
 msgid "Name"

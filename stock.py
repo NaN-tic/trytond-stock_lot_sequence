@@ -90,14 +90,27 @@ class Lot:
     @classmethod
     def create(cls, vlist):
         pool = Pool()
+        Product = pool.get('product.product')
+        for values in vlist:
+            if 'number' in values and len(values['number']) > 0:
+                continue
+            values['number'] = cls.calc_number(Product(values['product']),
+                lot_values=values)
+        return super(Lot, cls).create(vlist)
+
+    @classmethod
+    def calc_number(cls, product, lot_values=None):
+        pool = Pool()
         Sequence = pool.get('ir.sequence')
         Config = pool.get('stock.configuration')
 
         config = Config(1)
-        for values in vlist:
-            if 'number' in values and len(values['number']) > 0:
-                continue
+        if product.lot_sequence:
+            sequence_id = product.lot_sequence.id
+        elif product.category and product.category.lot_sequence:
+            sequence_id = product.category.lot_sequence.id
+        else:
             if not config.lot_sequence:
                 cls.raise_user_error('no_sequence')
-            values['number'] = Sequence.get_id(config.lot_sequence.id)
-        return super(Lot, cls).create(vlist)
+            sequence_id = config.lot_sequence.id
+        return Sequence.get_id(sequence_id)

@@ -1,1 +1,11 @@
+* Add Lot Sequence field in product.template and product.category and use them
+  to calculate the number of lot.
+  Priority is template's sequence -> category -> general configuration
+
+Version 3.2.0 - 2014-06-04
+* Adapted to vesion 3.2
+* Fix get/set_configuration functions of stock.configuration and removed
+  problematic required in stock.configuration.company field
+
+Version 3.0.0 - 2013-11-12
 * Initial release

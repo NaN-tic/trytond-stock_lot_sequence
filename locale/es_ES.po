@@ -10,9 +10,25 @@ msgstr ""
 "No se ha definido ninguna secuencia para los lotes. Se debe definir una "
 "secuencia o introducir un número de lote."
 
+msgctxt "field:product.category,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Secuencia lotes"
+
+msgctxt "field:product.category.company,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Secuencia lotes"
+
+msgctxt "field:product.template,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Secuencia lotes"
+
+msgctxt "field:product.template.company,lot_sequence:"
+msgid "Lot Sequence"
+msgstr "Secuencia lotes"
+
 msgctxt "field:stock.configuration,lot_sequence:"
 msgid "Lot Sequence"
-msgstr "Secuencia Lote"
+msgstr "Secuencia lotes"
 
 msgctxt "field:stock.configuration.company,company:"
 msgid "Company"
@@ -32,7 +48,7 @@ msgstr "ID"
 
 msgctxt "field:stock.configuration.company,lot_sequence:"
 msgid "Lot Sequence"
-msgstr "Secuencia Lote"
+msgstr "Secuencia lotes"
 
 msgctxt "field:stock.configuration.company,rec_name:"
 msgid "Name"
