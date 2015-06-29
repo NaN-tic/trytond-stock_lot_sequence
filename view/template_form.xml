@@ -2,7 +2,7 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/notebook/page[@id='lots']/field[@name='lot_required']"
+    <xpath expr="/form/notebook/page[@id='lots']/label[@name='lot_required']"
             position="before">
         <label name="lot_sequence"/>
         <field name="lot_sequence"/>
