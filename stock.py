@@ -99,6 +99,14 @@ class Lot:
         return super(Lot, cls).create(vlist)
 
     @classmethod
+    def copy(cls, lots, default=None):
+        if default is None:
+            default = {}
+        if 'number' not in default:
+            default['number'] = ''
+        return super(Lot, cls).copy(lots, default=default)
+
+    @classmethod
     def calc_number(cls, product, lot_values=None):
         pool = Pool()
         Sequence = pool.get('ir.sequence')
