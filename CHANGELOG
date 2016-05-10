@@ -1,3 +1,8 @@
+Version 4.0.0 - 2016-05-10
+* Improve product form layout
+* Search sequence on all categories
+* Remove dependency with product_configuration
+
 Version 3.4.0 - 2014-11-03
 * Add Lot Sequence field in product.template and product.category and use them
   to calculate the number of lot.

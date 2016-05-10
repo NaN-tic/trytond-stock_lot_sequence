@@ -11,6 +11,7 @@ def register():
         Category,
         TemplateCompany,
         Template,
+        Product,
         CompanyConfiguration,
         Configuration,
         Lot,

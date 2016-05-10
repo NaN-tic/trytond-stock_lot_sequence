@@ -4,42 +4,32 @@
 from decimal import Decimal
 import unittest
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, DB_NAME, USER, CONTEXT
-from trytond.tests.test_tryton import test_view, test_depends
+from trytond.tests.test_tryton import ModuleTestCase, with_transaction
 from trytond.transaction import Transaction
 from trytond.exceptions import UserError
+from trytond.pool import Pool
+
+from trytond.modules.company.tests import create_company, set_company
 
 
-class TestCase(unittest.TestCase):
+class TestCase(ModuleTestCase):
     'Test module'
+    module = 'stock_lot_sequence'
 
-    def setUp(self):
-        trytond.tests.test_tryton.install_module('stock_lot_sequence')
-
-    def test0005views(self):
-        'Test views'
-        test_view('stock_lot_sequence')
-
-    def test0006depends(self):
-        'Test depends'
-        test_depends()
-
+    @with_transaction()
     def test_lot_sequence(self):
         'Test lot sequence'
-        Company = POOL.get('company.company')
-        User = POOL.get('res.user')
-        Template = POOL.get('product.template')
-        Product = POOL.get('product.product')
-        Category = POOL.get('product.category')
-        Uom = POOL.get('product.uom')
-        Sequence = POOL.get('ir.sequence')
-        Config = POOL.get('stock.configuration')
-        Lot = POOL.get('stock.lot')
+        pool = Pool()
+        Template = pool.get('product.template')
+        Product = pool.get('product.product')
+        Category = pool.get('product.category')
+        Uom = pool.get('product.uom')
+        Sequence = pool.get('ir.sequence')
+        Config = pool.get('stock.configuration')
+        Lot = pool.get('stock.lot')
 
-        with Transaction().start(DB_NAME, USER, context=CONTEXT):
-            company, = Company.search([
-                    ('rec_name', '=', 'Dunder Mifflin'),
-                    ])
+        company = create_company()
+        with set_company(company):
             category = Category(name='Category')
             category.save()
 
@@ -52,7 +42,7 @@ class TestCase(unittest.TestCase):
                 list_price=Decimal(10),
                 cost_price=Decimal(3),
                 default_uom=unit,
-                category=category,
+                categories=[category],
                 )
             template.save()
             product = Product(template=template)
@@ -123,9 +113,5 @@ class TestCase(unittest.TestCase):
 
 def suite():
     suite = trytond.tests.test_tryton.suite()
-    from trytond.modules.company.tests import test_company
-    for test in test_company.suite():
-        if test not in suite:
-            suite.addTest(test)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCase))
     return suite

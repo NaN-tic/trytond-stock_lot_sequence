@@ -115,10 +115,13 @@ class Lot:
         config = Config(1)
         if product.lot_sequence:
             sequence_id = product.lot_sequence.id
-        elif product.category and product.category.lot_sequence:
-            sequence_id = product.category.lot_sequence.id
         else:
-            if not config.lot_sequence:
-                cls.raise_user_error('no_sequence')
-            sequence_id = config.lot_sequence.id
+            for category in product.categories:
+                if category.lot_sequence:
+                    sequence_id = category.lot_sequence.id
+                    break
+            else:
+                if not config.lot_sequence:
+                    cls.raise_user_error('no_sequence')
+                sequence_id = config.lot_sequence.id
         return Sequence.get_id(sequence_id)
