@@ -1,15 +1,15 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import Model, ModelSQL, fields
+from trytond.model import ModelSQL, fields
 from trytond.pyson import Eval
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
+from trytond.modules.company.model import CompanyValueMixin
 
 __all__ = ['Lot', 'Configuration', 'CompanyConfiguration']
-__metaclass__ = PoolMeta
 
 
-class CompanyConfiguration(ModelSQL):
+class CompanyConfiguration(ModelSQL, CompanyValueMixin):
     'Stock Company Configuration'
     __name__ = 'stock.configuration.company'
 
@@ -27,54 +27,26 @@ class CompanyConfiguration(ModelSQL):
 
 
 class Configuration:
+    __metaclass__ = PoolMeta
     __name__ = 'stock.configuration'
 
-    lot_sequence = fields.Function(fields.Many2One('ir.sequence',
+    lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
             'Lot Sequence', domain=[
                 ('code', '=', 'stock.lot'),
                 ('company', 'in',
                     [Eval('context', {}).get('company', -1), None]),
-                ], required=True),
-        'get_configuration', setter='set_configuration')
+                ], required=True))
 
     @classmethod
-    def get_configuration(cls, configs, names):
+    def multivalue_model(cls, field):
         pool = Pool()
-        CompanyConfig = pool.get('stock.configuration.company')
-
-        company_id = Transaction().context.get('company')
-        company_configs = CompanyConfig.search([
-                ('company', '=', company_id),
-                ])
-
-        res = {}
-        for fname in names:
-            res[fname] = {}.fromkeys([c.id for c in configs], None)
-            if company_configs:
-                val = getattr(company_configs[0], fname)
-                if isinstance(val, Model):
-                    val = val.id
-                res[fname][configs[0].id] = val
-        return res
-
-    @classmethod
-    def set_configuration(cls, configs, name, value):
-        pool = Pool()
-        CompanyConfig = pool.get('stock.configuration.company')
-
-        company_id = Transaction().context.get('company')
-        company_configs = CompanyConfig.search([
-                ('company', '=', company_id),
-                ])
-        if company_configs:
-            company_config = company_configs[0]
-        else:
-            company_config = CompanyConfig(company=company_id)
-        setattr(company_config, name, value)
-        company_config.save()
+        if field == 'lot_sequence':
+            return pool.get('stock.configuration.company')
+        return super(Configuration, cls).multivalue_model(field)
 
 
 class Lot:
+    __metaclass__ = PoolMeta
     __name__ = 'stock.lot'
 
     @classmethod
@@ -83,7 +55,7 @@ class Lot:
         if cls.number.required:
             cls.number.required = False
         cls._error_messages.update({
-                'no_sequence':  ('No sequence defined for lot. You must '
+                'no_sequence': ('No sequence defined for lot. You must '
                     'define a sequence or enter lot\'s number.'),
                 })
 
@@ -102,8 +74,9 @@ class Lot:
     def copy(cls, lots, default=None):
         if default is None:
             default = {}
-        if 'number' not in default:
-            default['number'] = ''
+        else:
+            default = default.copy()
+        default.setdefault('number')
         return super(Lot, cls).copy(lots, default=default)
 
     @classmethod

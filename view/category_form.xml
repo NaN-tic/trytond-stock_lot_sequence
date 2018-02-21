@@ -2,7 +2,7 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/field[@name='rec_name']" position="after">
+    <xpath expr="/form/field[@name='parent']" position="after">
         <label name="lot_sequence"/>
         <field name="lot_sequence"/>
     </xpath>

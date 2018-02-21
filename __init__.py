@@ -1,18 +1,18 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond.pool import Pool
-from .product import *
-from .stock import *
+from . import product
+from . import stock
 
 
 def register():
     Pool.register(
-        CategoryCompany,
-        Category,
-        TemplateCompany,
-        Template,
-        Product,
-        CompanyConfiguration,
-        Configuration,
-        Lot,
+        product.CategoryCompany,
+        product.Category,
+        product.TemplateCompany,
+        product.Template,
+        product.Product,
+        stock.CompanyConfiguration,
+        stock.Configuration,
+        stock.Lot,
         module='stock_lot_sequence', type_='model')
