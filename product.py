@@ -1,23 +1,23 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond.model import ModelSQL, fields
-from trytond.pool import PoolMeta, Pool
+from trytond.pool import PoolMeta
 from trytond.pyson import Eval
 from trytond.modules.company.model import (
     CompanyMultiValueMixin, CompanyValueMixin)
 
-__all__ = ['CategoryCompany', 'Category', 'TemplateCompany', 'Template',
-    'Product']
+__all__ = ['CategoryCompany', 'Category', 'TemplateCompany', 'Template']
 
 
 class CategoryCompany(ModelSQL, CompanyValueMixin):
     'Category per Company'
-    __name__ = 'product.category.company'
+    __name__ = 'product.category.lot_sequence'
 
     category = fields.Many2One('product.category', 'Category', required=True,
         ondelete='CASCADE', select=True)
     lot_sequence = fields.Many2One(
         'ir.sequence', 'Lot Sequence',
+        select=True,
         domain=[
             ('code', '=', 'stock.lot'),
             ('company', 'in', [Eval('company', -1), None]),
@@ -39,17 +39,10 @@ class Category(CompanyMultiValueMixin):
                 'invisible': ~Eval('context', {}).get('company'),
                 }))
 
-    @classmethod
-    def multivalue_model(cls, field):
-        pool = Pool()
-        if field == 'lot_sequence':
-            return pool.get('product.category.company')
-        return super(Category, cls).multivalue_model(field)
-
 
 class TemplateCompany(ModelSQL, CompanyValueMixin):
     'Template per Company'
-    __name__ = 'product.template.company'
+    __name__ = 'product.template.lot_sequence'
 
     template = fields.Many2One('product.template', 'Template', required=True,
         ondelete='CASCADE', select=True)
@@ -59,10 +52,11 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
             ('code', '=', 'stock.lot'),
             ('company', 'in', [Eval('company', -1), None]),
             ],
+        select=True,
         depends=['company'])
 
 
-class Template(CompanyMultiValueMixin):
+class Template:
     __name__ = 'product.template'
     __metaclass__ = PoolMeta
 
@@ -75,15 +69,3 @@ class Template(CompanyMultiValueMixin):
             states={
                 'invisible': ~Eval('context', {}).get('company'),
                 }))
-
-    @classmethod
-    def multivalue_model(cls, field):
-        pool = Pool()
-        if field == 'lot_sequence':
-            return pool.get('product.template.company')
-        return super(Template, cls).multivalue_model(field)
-
-
-class Product:
-    __metaclass__ = PoolMeta
-    __name__ = 'product.product'
