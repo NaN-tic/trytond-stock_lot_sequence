@@ -11,7 +11,6 @@ def register():
         product.Category,
         product.TemplateCompany,
         product.Template,
-        product.Product,
         stock.CompanyConfiguration,
         stock.Configuration,
         stock.Lot,
