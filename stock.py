@@ -86,8 +86,8 @@ class Lot:
         Config = pool.get('stock.configuration')
 
         config = Config(1)
-        if product.lot_sequence:
-            sequence_id = product.lot_sequence.id
+        if product.template.lot_sequence:
+            sequence_id = product.template.lot_sequence.id
         else:
             for category in product.categories:
                 if category.lot_sequence:
