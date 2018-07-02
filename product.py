@@ -39,6 +39,9 @@ class Category(CompanyMultiValueMixin):
                 'invisible': ~Eval('context', {}).get('company'),
                 }))
 
+    lot_sequences = fields.One2Many('product.category.lot_sequence',
+        'category', 'Lot Sequences')
+
 
 class TemplateCompany(ModelSQL, CompanyValueMixin):
     'Template per Company'
@@ -69,3 +72,6 @@ class Template:
             states={
                 'invisible': ~Eval('context', {}).get('company'),
                 }))
+
+    lot_sequences = fields.One2Many('product.template.lot_sequence',
+        'template', 'Lot Sequences')
