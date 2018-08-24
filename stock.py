@@ -26,8 +26,7 @@ class CompanyConfiguration(ModelSQL, CompanyValueMixin):
         return Transaction().context.get('company')
 
 
-class Configuration:
-    __metaclass__ = PoolMeta
+class Configuration(metaclass=PoolMeta):
     __name__ = 'stock.configuration'
 
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
@@ -45,8 +44,7 @@ class Configuration:
         return super(Configuration, cls).multivalue_model(field)
 
 
-class Lot:
-    __metaclass__ = PoolMeta
+class Lot(metaclass=PoolMeta):
     __name__ = 'stock.lot'
 
     @classmethod

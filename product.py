@@ -35,9 +35,8 @@ class CategoryCompany(ModelSQL, CompanyValueMixin):
         super(CategoryCompany, cls).__register__(module_name)
 
 
-class Category(CompanyMultiValueMixin):
+class Category(CompanyMultiValueMixin, metaclass=PoolMeta):
     __name__ = 'product.category'
-    __metaclass__ = PoolMeta
 
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
             'Lot Sequence', domain=[
@@ -78,9 +77,8 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
         super(TemplateCompany, cls).__register__(module_name)
 
 
-class Template:
+class Template(metaclass=PoolMeta):
     __name__ = 'product.template'
-    __metaclass__ = PoolMeta
 
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
             'Lot Sequence', domain=[
