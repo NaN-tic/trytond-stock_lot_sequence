@@ -5,6 +5,8 @@ from trytond.pyson import Eval
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.modules.company.model import CompanyValueMixin
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 
 __all__ = ['Lot', 'Configuration', 'CompanyConfiguration']
 
@@ -52,10 +54,6 @@ class Lot(metaclass=PoolMeta):
         super(Lot, cls).__setup__()
         if cls.number.required:
             cls.number.required = False
-        cls._error_messages.update({
-                'no_sequence': ('No sequence defined for lot. You must '
-                    'define a sequence or enter lot\'s number.'),
-                })
 
     @classmethod
     def create(cls, vlist):
@@ -93,6 +91,6 @@ class Lot(metaclass=PoolMeta):
                     break
             else:
                 if not config.lot_sequence:
-                    cls.raise_user_error('no_sequence')
+                    raise UserError(gettext('stock_lot_sequence.no_sequence'))
                 sequence_id = config.lot_sequence.id
         return Sequence.get_id(sequence_id)
