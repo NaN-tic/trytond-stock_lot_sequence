@@ -27,11 +27,10 @@ class CategoryCompany(ModelSQL, CompanyValueMixin):
 
     @classmethod
     def __register__(cls, module_name):
-        TableHandler = backend.get('TableHandler')
-        exist = TableHandler.table_exist('product_category_company')
+        exist = backend.TableHandler.table_exist('product_category_company')
 
         if exist:
-            TableHandler.table_rename('product_category_company', cls._table)
+            backend.TableHandler.table_rename('product_category_company', cls._table)
         super(CategoryCompany, cls).__register__(module_name)
 
 
@@ -69,11 +68,10 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
 
     @classmethod
     def __register__(cls, module_name):
-        TableHandler = backend.get('TableHandler')
-        exist = TableHandler.table_exist('product_template_company')
+        exist = backend.TableHandler.table_exist('product_template_company')
 
         if exist:
-            TableHandler.table_rename('product_template_company', cls._table)
+            backend.TableHandler.table_rename('product_template_company', cls._table)
         super(TemplateCompany, cls).__register__(module_name)
 
 
