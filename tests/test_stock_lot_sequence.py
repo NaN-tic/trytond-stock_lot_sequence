@@ -48,68 +48,61 @@ class TestCase(ModuleTestCase):
             product = Product(template=template)
             product.save()
 
-            with self.assertRaises(UserError):
-                lot, = Lot.create([{'product': product.id}])
+            lot, = Lot.create([{'product': product.id}])
 
-            sequence = Sequence(code='stock.lot', name='Config Sequence')
-            sequence.save()
             cat_sequence = Sequence(code='stock.lot', name='Category Sequence')
             cat_sequence.save()
             tem_sequence = Sequence(code='stock.lot', name='Template Sequence')
             tem_sequence.save()
-            with Transaction().set_context(company=company.id):
-                config = Config()
-                config.lot_sequence = sequence
-                config.save()
-                lots = Lot.create([
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        ])
-                self.assertEqual([l.number for l in lots], [str(x) for x
-                        in range(1, 6)])
 
-                # Set number manualy
-                lot = Lot(product=product, number='M1')
-                lot.save()
-                self.assertEqual(lot.number, 'M1')
+            lots = Lot.create([
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    ])
+            self.assertEqual([l.number for l in lots], [str(x) for x
+                    in range(2, 7)])
 
-                lots = Lot.create([
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        ])
-                self.assertEqual([l.number for l in lots], [str(x) for x
-                        in range(6, 11)])
+            # Set number manualy
+            lot = Lot(product=product, number='M1')
+            lot.save()
+            self.assertEqual(lot.number, 'M1')
 
-                category.lot_sequence = cat_sequence
-                category.save()
-                # It should use the category sequence
-                lots = Lot.create([
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        ])
-                self.assertEqual([l.number for l in lots], [str(x) for x
-                        in range(1, 6)])
+            lots = Lot.create([
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    ])
+            self.assertEqual([l.number for l in lots], [str(x) for x
+                    in range(7, 12)])
 
-                template.lot_sequence = tem_sequence
-                template.save()
-                # It should use the template sequence
-                lots = Lot.create([
-                        {'product': product.id},
-                        {'product': product.id},
-                        {'product': product.id},
-                        ])
-                self.assertEqual([l.number for l in lots], [str(x) for x
-                        in range(1, 4)])
+            category.lot_sequence = cat_sequence
+            category.save()
+            # It should use the category sequence
+            lots = Lot.create([
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    ])
+            self.assertEqual([l.number for l in lots], [str(x) for x
+                    in range(1, 6)])
 
+            template.lot_sequence = tem_sequence
+            template.save()
+            # It should use the template sequence
+            lots = Lot.create([
+                    {'product': product.id},
+                    {'product': product.id},
+                    {'product': product.id},
+                    ])
+            self.assertEqual([l.number for l in lots], [str(x) for x
+                    in range(1, 4)])
 
 def suite():
     suite = trytond.tests.test_tryton.suite()

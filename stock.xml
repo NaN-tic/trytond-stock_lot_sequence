@@ -25,8 +25,8 @@
         </record>
 
         <record model="ir.sequence" id="sequence_lot">
-                <field name="name">Lot</field>
-                <field name="code">stock.lot</field>
+            <field name="name">Lot</field>
+            <field name="code">stock.lot</field>
         </record>
     </data>
 </tryton>
