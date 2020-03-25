@@ -3,34 +3,23 @@
 from trytond.model import ModelSQL, fields
 from trytond.pyson import Eval
 from trytond.pool import Pool, PoolMeta
-from trytond.transaction import Transaction
 from trytond.modules.company.model import CompanyValueMixin
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 
 __all__ = ['Lot', 'Configuration', 'CompanyConfiguration']
 
-
-class CompanyConfiguration(ModelSQL, CompanyValueMixin):
-    'Stock Company Configuration'
-    __name__ = 'stock.configuration.company'
-
-    company = fields.Many2One('company.company', 'Company', required=True,
-        ondelete='CASCADE', select=True)
-    lot_sequence = fields.Many2One('ir.sequence', 'Lot Sequence', domain=[
-            ('code', '=', 'stock.lot'),
-            ('company', 'in',
-                [Eval('context', {}).get('company', -1), None]),
-            ])
-
-    @staticmethod
-    def default_company():
-        return Transaction().context.get('company')
+def default_func(field_name):
+    @classmethod
+    def default(cls, **pattern):
+        return getattr(
+            cls.multivalue_model(field_name),
+            'default_%s' % field_name, lambda: None)()
+    return default
 
 
 class Configuration(metaclass=PoolMeta):
     __name__ = 'stock.configuration'
-
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
             'Lot Sequence', domain=[
                 ('code', '=', 'stock.lot'),
@@ -44,6 +33,27 @@ class Configuration(metaclass=PoolMeta):
         if field == 'lot_sequence':
             return pool.get('stock.configuration.company')
         return super(Configuration, cls).multivalue_model(field)
+
+    default_lot_sequence = default_func('lot_sequence')
+
+
+class CompanyConfiguration(ModelSQL, CompanyValueMixin):
+    'Stock Company Configuration'
+    __name__ = 'stock.configuration.company'
+    lot_sequence = fields.Many2One('ir.sequence', 'Lot Sequence', domain=[
+            ('code', '=', 'stock.lot'),
+            ('company', 'in',
+                [Eval('context', {}).get('company', -1), None]),
+            ])
+
+    @classmethod
+    def default_lot_sequence(cls):
+        pool = Pool()
+        ModelData = pool.get('ir.model.data')
+        try:
+            return ModelData.get_id('stock_lot_sequence', 'sequence_lot')
+        except KeyError:
+            return None
 
 
 class Lot(metaclass=PoolMeta):
