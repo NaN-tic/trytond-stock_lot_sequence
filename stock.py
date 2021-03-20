@@ -1,13 +1,12 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond.model import ModelSQL, fields
-from trytond.pyson import Eval
+from trytond.pyson import Eval, Id
 from trytond.pool import Pool, PoolMeta
 from trytond.modules.company.model import CompanyValueMixin
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 
-__all__ = ['Lot', 'Configuration', 'CompanyConfiguration']
 
 def default_func(field_name):
     @classmethod
@@ -22,7 +21,8 @@ class Configuration(metaclass=PoolMeta):
     __name__ = 'stock.configuration'
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
             'Lot Sequence', domain=[
-                ('code', '=', 'stock.lot'),
+                ('sequence_type', '=', Id('stock_lot_sequence',
+                        'sequence_type_lot')),
                 ('company', 'in',
                     [Eval('context', {}).get('company', -1), None]),
                 ], required=True))
@@ -41,7 +41,8 @@ class CompanyConfiguration(ModelSQL, CompanyValueMixin):
     'Stock Company Configuration'
     __name__ = 'stock.configuration.company'
     lot_sequence = fields.Many2One('ir.sequence', 'Lot Sequence', domain=[
-            ('code', '=', 'stock.lot'),
+            ('sequence_type', '=', Id('stock_lot_sequence',
+                    'sequence_type_lot')),
             ('company', 'in',
                 [Eval('context', {}).get('company', -1), None]),
             ])
@@ -88,19 +89,18 @@ class Lot(metaclass=PoolMeta):
     @classmethod
     def calc_number(cls, product, lot_values=None):
         pool = Pool()
-        Sequence = pool.get('ir.sequence')
         Config = pool.get('stock.configuration')
 
         config = Config(1)
         if product.template.lot_sequence:
-            sequence_id = product.template.lot_sequence.id
+            sequence = product.template.lot_sequence
         else:
             for category in product.categories:
                 if category.lot_sequence:
-                    sequence_id = category.lot_sequence.id
+                    sequence = category.lot_sequence
                     break
             else:
                 if not config.lot_sequence:
                     raise UserError(gettext('stock_lot_sequence.no_sequence'))
-                sequence_id = config.lot_sequence.id
-        return Sequence.get_id(sequence_id)
+                sequence = config.lot_sequence
+        return sequence.get()

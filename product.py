@@ -2,12 +2,10 @@
 # copyright notices and license terms.
 from trytond.model import ModelSQL, fields
 from trytond.pool import PoolMeta
-from trytond.pyson import Eval
+from trytond.pyson import Eval, Id
 from trytond import backend
 from trytond.modules.company.model import (
     CompanyMultiValueMixin, CompanyValueMixin)
-
-__all__ = ['CategoryCompany', 'Category', 'TemplateCompany', 'Template']
 
 
 class CategoryCompany(ModelSQL, CompanyValueMixin):
@@ -18,9 +16,9 @@ class CategoryCompany(ModelSQL, CompanyValueMixin):
         ondelete='CASCADE', select=True)
     lot_sequence = fields.Many2One(
         'ir.sequence', 'Lot Sequence',
-        select=True,
         domain=[
-            ('code', '=', 'stock.lot'),
+            ('sequence_type', '=', Id('stock_lot_sequence',
+                    'sequence_type_lot')),
             ('company', 'in', [Eval('company', -1), None]),
             ],
         depends=['company'])
@@ -39,7 +37,8 @@ class Category(CompanyMultiValueMixin, metaclass=PoolMeta):
 
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
             'Lot Sequence', domain=[
-                ('code', '=', 'stock.lot'),
+                ('sequence_type', '=', Id('stock_lot_sequence',
+                        'sequence_type_lot')),
                 ('company', 'in',
                     [Eval('context', {}).get('company', -1), None]),
                 ],
@@ -60,7 +59,8 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
     lot_sequence = fields.Many2One(
         'ir.sequence', 'Lot Sequence',
         domain=[
-            ('code', '=', 'stock.lot'),
+            ('sequence_type', '=', Id('stock_lot_sequence',
+                    'sequence_type_lot')),
             ('company', 'in', [Eval('company', -1), None]),
             ],
         select=True,
@@ -71,7 +71,8 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
         exist = backend.TableHandler.table_exist('product_template_company')
 
         if exist:
-            backend.TableHandler.table_rename('product_template_company', cls._table)
+            backend.TableHandler.table_rename('product_template_company',
+                cls._table)
         super(TemplateCompany, cls).__register__(module_name)
 
 
@@ -80,13 +81,13 @@ class Template(metaclass=PoolMeta):
 
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
             'Lot Sequence', domain=[
-                ('code', '=', 'stock.lot'),
+                ('sequence_type', '=', Id('stock_lot_sequence',
+                        'sequence_type_lot')),
                 ('company', 'in',
                     [Eval('context', {}).get('company', -1), None]),
                 ],
             states={
                 'invisible': ~Eval('context', {}).get('company'),
                 }))
-
     lot_sequences = fields.One2Many('product.template.lot_sequence',
         'template', 'Lot Sequences')

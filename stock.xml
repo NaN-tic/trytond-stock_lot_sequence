@@ -11,7 +11,6 @@
 
         <record model="ir.sequence.type" id="sequence_type_lot">
             <field name="name">Lot</field>
-            <field name="code">stock.lot</field>
         </record>
         <record model="ir.sequence.type-res.group"
             id="sequence_type_lot_group_admin">
@@ -26,7 +25,7 @@
 
         <record model="ir.sequence" id="sequence_lot">
             <field name="name">Lot</field>
-            <field name="code">stock.lot</field>
+            <field name="sequence_type" ref="sequence_type_lot"/>
         </record>
     </data>
 </tryton>

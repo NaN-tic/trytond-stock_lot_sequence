@@ -5,8 +5,6 @@ from decimal import Decimal
 import unittest
 import trytond.tests.test_tryton
 from trytond.tests.test_tryton import ModuleTestCase, with_transaction
-from trytond.transaction import Transaction
-from trytond.exceptions import UserError
 from trytond.pool import Pool
 
 from trytond.modules.company.tests import create_company, set_company
@@ -25,8 +23,9 @@ class TestCase(ModuleTestCase):
         Category = pool.get('product.category')
         Uom = pool.get('product.uom')
         Sequence = pool.get('ir.sequence')
-        Config = pool.get('stock.configuration')
+        SequenceType = pool.get('ir.sequence.type')
         Lot = pool.get('stock.lot')
+        ModelData = pool.get('ir.model.data')
 
         company = create_company()
         with set_company(company):
@@ -50,9 +49,15 @@ class TestCase(ModuleTestCase):
 
             lot, = Lot.create([{'product': product.id}])
 
-            cat_sequence = Sequence(code='stock.lot', name='Category Sequence')
+            sequence_type = SequenceType(ModelData.get_id('stock_lot_sequence',
+                    'sequence_type_lot'))
+            cat_sequence = Sequence(sequence_type=sequence_type,
+                name='Category Sequence')
             cat_sequence.save()
-            tem_sequence = Sequence(code='stock.lot', name='Template Sequence')
+            sequence_type = SequenceType(ModelData.get_id('stock_lot_sequence',
+                    'sequence_type_lot'))
+            tem_sequence = Sequence(sequence_type=sequence_type,
+                name='Template Sequence')
             tem_sequence.save()
 
             lots = Lot.create([
