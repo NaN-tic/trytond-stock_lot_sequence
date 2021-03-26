@@ -71,7 +71,7 @@ class Lot(metaclass=PoolMeta):
         pool = Pool()
         Product = pool.get('product.product')
         for values in vlist:
-            if 'number' in values and len(values['number']) > 0:
+            if values.get('number') and len(values['number']) > 0:
                 continue
             values['number'] = cls.calc_number(Product(values['product']),
                 lot_values=values)
