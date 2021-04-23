@@ -1,60 +1,8 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import ModelSQL, fields
-from trytond.pyson import Eval, Id
 from trytond.pool import Pool, PoolMeta
-from trytond.modules.company.model import CompanyValueMixin
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
-
-
-def default_func(field_name):
-    @classmethod
-    def default(cls, **pattern):
-        return getattr(
-            cls.multivalue_model(field_name),
-            'default_%s' % field_name, lambda: None)()
-    return default
-
-
-class Configuration(metaclass=PoolMeta):
-    __name__ = 'stock.configuration'
-    lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
-            'Lot Sequence', domain=[
-                ('sequence_type', '=', Id('stock_lot_sequence',
-                        'sequence_type_lot')),
-                ('company', 'in',
-                    [Eval('context', {}).get('company', -1), None]),
-                ], required=True))
-
-    @classmethod
-    def multivalue_model(cls, field):
-        pool = Pool()
-        if field == 'lot_sequence':
-            return pool.get('stock.configuration.company')
-        return super(Configuration, cls).multivalue_model(field)
-
-    default_lot_sequence = default_func('lot_sequence')
-
-
-class CompanyConfiguration(ModelSQL, CompanyValueMixin):
-    'Stock Company Configuration'
-    __name__ = 'stock.configuration.company'
-    lot_sequence = fields.Many2One('ir.sequence', 'Lot Sequence', domain=[
-            ('sequence_type', '=', Id('stock_lot_sequence',
-                    'sequence_type_lot')),
-            ('company', 'in',
-                [Eval('context', {}).get('company', -1), None]),
-            ])
-
-    @classmethod
-    def default_lot_sequence(cls):
-        pool = Pool()
-        ModelData = pool.get('ir.model.data')
-        try:
-            return ModelData.get_id('stock_lot_sequence', 'sequence_lot')
-        except KeyError:
-            return None
 
 
 class Lot(metaclass=PoolMeta):
@@ -89,7 +37,7 @@ class Lot(metaclass=PoolMeta):
     @classmethod
     def calc_number(cls, product, lot_values=None):
         pool = Pool()
-        Config = pool.get('stock.configuration')
+        Config = pool.get('product.configuration')
 
         config = Config(1)
         if product.template.lot_sequence:
@@ -100,7 +48,7 @@ class Lot(metaclass=PoolMeta):
                     sequence = category.lot_sequence
                     break
             else:
-                if not config.lot_sequence:
+                if not config.default_lot_sequence:
                     raise UserError(gettext('stock_lot_sequence.no_sequence'))
-                sequence = config.lot_sequence
+                sequence = config.default_lot_sequence
         return sequence.get()

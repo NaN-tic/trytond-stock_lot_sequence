@@ -7,11 +7,11 @@ from . import stock
 
 def register():
     Pool.register(
+        product.Configuration,
+        product.ConfigurationDefaultLotSequence,
         product.CategoryCompany,
         product.Category,
         product.TemplateCompany,
         product.Template,
-        stock.CompanyConfiguration,
-        stock.Configuration,
         stock.Lot,
         module='stock_lot_sequence', type_='model')

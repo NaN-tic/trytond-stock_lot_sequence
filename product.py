@@ -1,24 +1,49 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond.model import ModelSQL, fields
-from trytond.pool import PoolMeta
+from trytond.pool import PoolMeta, Pool
 from trytond.pyson import Eval, Id
 from trytond import backend
 from trytond.modules.company.model import (
     CompanyMultiValueMixin, CompanyValueMixin)
 
+def default_func(field_name):
+    @classmethod
+    def default(cls, **pattern):
+        return getattr(
+            cls.multivalue_model(field_name),
+            'default_%s' % field_name, lambda: None)()
+    return default
+
+
+class Configuration(metaclass=PoolMeta):
+    __name__ = 'product.configuration'
+    default_default_lot_sequence = default_func('default_lot_sequence')
+
+
+class ConfigurationDefaultLotSequence(metaclass=PoolMeta):
+    __name__ = 'product.configuration.default_lot_sequence'
+
+    @classmethod
+    def default_default_lot_sequence(cls):
+        pool = Pool()
+        ModelData = pool.get('ir.model.data')
+        try:
+            return ModelData.get_id('stock_lot_sequence', 'sequence_lot')
+        except KeyError:
+            return None
+
 
 class CategoryCompany(ModelSQL, CompanyValueMixin):
     'Category per Company'
     __name__ = 'product.category.lot_sequence'
-
     category = fields.Many2One('product.category', 'Category', required=True,
         ondelete='CASCADE', select=True)
     lot_sequence = fields.Many2One(
         'ir.sequence', 'Lot Sequence',
         domain=[
-            ('sequence_type', '=', Id('stock_lot_sequence',
-                    'sequence_type_lot')),
+            ('sequence_type', '=', Id('stock_lot',
+                    'sequence_type_stock_lot')),
             ('company', 'in', [Eval('company', -1), None]),
             ],
         depends=['company'])
@@ -34,11 +59,10 @@ class CategoryCompany(ModelSQL, CompanyValueMixin):
 
 class Category(CompanyMultiValueMixin, metaclass=PoolMeta):
     __name__ = 'product.category'
-
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
             'Lot Sequence', domain=[
-                ('sequence_type', '=', Id('stock_lot_sequence',
-                        'sequence_type_lot')),
+                ('sequence_type', '=', Id('stock_lot',
+                        'sequence_type_stock_lot')),
                 ('company', 'in',
                     [Eval('context', {}).get('company', -1), None]),
                 ],
@@ -53,14 +77,13 @@ class Category(CompanyMultiValueMixin, metaclass=PoolMeta):
 class TemplateCompany(ModelSQL, CompanyValueMixin):
     'Template per Company'
     __name__ = 'product.template.lot_sequence'
-
     template = fields.Many2One('product.template', 'Template', required=True,
         ondelete='CASCADE', select=True)
     lot_sequence = fields.Many2One(
         'ir.sequence', 'Lot Sequence',
         domain=[
-            ('sequence_type', '=', Id('stock_lot_sequence',
-                    'sequence_type_lot')),
+            ('sequence_type', '=', Id('stock_lot',
+                    'sequence_type_stock_lot')),
             ('company', 'in', [Eval('company', -1), None]),
             ],
         select=True,
@@ -81,8 +104,8 @@ class Template(metaclass=PoolMeta):
 
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
             'Lot Sequence', domain=[
-                ('sequence_type', '=', Id('stock_lot_sequence',
-                        'sequence_type_lot')),
+                ('sequence_type', '=', Id('stock_lot',
+                        'sequence_type_stock_lot')),
                 ('company', 'in',
                     [Eval('context', {}).get('company', -1), None]),
                 ],

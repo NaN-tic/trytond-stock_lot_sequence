@@ -31,6 +31,7 @@ class TestCase(ModuleTestCase):
         with set_company(company):
             category = Category(name='Category')
             category.save()
+            self.assertEqual(category.lot_sequence, None)
 
             unit, = Uom.search([
                     ('name', '=', 'Unit'),
@@ -42,20 +43,22 @@ class TestCase(ModuleTestCase):
                 cost_price=Decimal(3),
                 default_uom=unit,
                 categories=[category],
+                lot_sequence=None,
                 )
             template.save()
             product = Product(template=template)
             product.save()
+            self.assertEqual(template.lot_sequence, None)
 
             lot, = Lot.create([{'product': product.id}])
 
-            sequence_type = SequenceType(ModelData.get_id('stock_lot_sequence',
-                    'sequence_type_lot'))
+            sequence_type = SequenceType(ModelData.get_id('stock_lot',
+                    'sequence_type_stock_lot'))
             cat_sequence = Sequence(sequence_type=sequence_type,
                 name='Category Sequence')
             cat_sequence.save()
-            sequence_type = SequenceType(ModelData.get_id('stock_lot_sequence',
-                    'sequence_type_lot'))
+            sequence_type = SequenceType(ModelData.get_id('stock_lot',
+                    'sequence_type_stock_lot'))
             tem_sequence = Sequence(sequence_type=sequence_type,
                 name='Template Sequence')
             tem_sequence.save()
@@ -75,6 +78,7 @@ class TestCase(ModuleTestCase):
             lot.save()
             self.assertEqual(lot.number, 'M1')
 
+            # category + not category sequence
             lots = Lot.create([
                     {'product': product.id},
                     {'product': product.id},
@@ -85,6 +89,7 @@ class TestCase(ModuleTestCase):
             self.assertEqual([l.number for l in lots], [str(x) for x
                     in range(7, 12)])
 
+            # category + category sequence
             category.lot_sequence = cat_sequence
             category.save()
             # It should use the category sequence
@@ -98,6 +103,7 @@ class TestCase(ModuleTestCase):
             self.assertEqual([l.number for l in lots], [str(x) for x
                     in range(1, 6)])
 
+            # not category sequence + template sequence
             template.lot_sequence = tem_sequence
             template.save()
             # It should use the template sequence
