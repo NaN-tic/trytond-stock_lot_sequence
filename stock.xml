@@ -7,6 +7,14 @@
         <record model="ir.sequence.type" id="sequence_type_lot">
             <field name="name">Lot</field>
         </record>
+        <record model="ir.sequence.type-res.group" id="sequence_type_stock_group_admin">
+            <field name="sequence_type" ref="sequence_type_lot"/>
+            <field name="group" ref="res.group_admin"/>
+        </record>
+        <record model="ir.sequence.type-res.group" id="sequence_type_stock_group_stock_admin">
+            <field name="sequence_type" ref="sequence_type_lot"/>
+            <field name="group" ref="stock.group_stock_admin"/>
+        </record>
 
         <record model="ir.sequence" id="sequence_lot">
             <field name="name">Lot</field>
