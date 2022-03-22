@@ -3,7 +3,11 @@
      copyright notices and license terms. -->
 <tryton>
     <data>
-        <!-- stock_lot add sequence.type but not sequence -->
+        <!-- TODO: Remove after 6.0 upgrade as we just keep it to prevent crashes on upgrades -->
+        <record model="ir.sequence.type" id="sequence_type_lot">
+            <field name="name">Lot</field>
+        </record>
+
         <record model="ir.sequence" id="sequence_lot">
             <field name="name">Lot</field>
             <field name="sequence_type" ref="stock_lot.sequence_type_stock_lot"/>
