@@ -38,7 +38,7 @@ class CategoryCompany(ModelSQL, CompanyValueMixin):
     'Category per Company'
     __name__ = 'product.category.lot_sequence'
     category = fields.Many2One('product.category', 'Category', required=True,
-        ondelete='CASCADE', select=True, context={
+        ondelete='CASCADE', context={
             'company': Eval('company'),
             },
         depends=['company'])
@@ -81,7 +81,7 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
     'Template per Company'
     __name__ = 'product.template.lot_sequence'
     template = fields.Many2One('product.template', 'Template', required=True,
-        ondelete='CASCADE', select=True, context={
+        ondelete='CASCADE', context={
             'company': Eval('company'),
             },
         depends=['company'])
@@ -92,7 +92,6 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
                     'sequence_type_stock_lot')),
             ('company', 'in', [Eval('company', -1), None]),
             ],
-        select=True,
         depends=['company'])
 
     @classmethod
