@@ -107,16 +107,20 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
 
 class Template(metaclass=PoolMeta):
     __name__ = 'product.template'
-
-    lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
-            'Lot Sequence', domain=[
-                ('sequence_type', '=', Id('stock_lot',
-                        'sequence_type_stock_lot')),
-                ('company', 'in',
-                    [Eval('context', {}).get('company', -1), None]),
-                ],
-            states={
-                'invisible': ~Eval('context', {}).get('company'),
-                }))
     lot_sequences = fields.One2Many('product.template.lot_sequence',
         'template', 'Lot Sequences')
+
+    @classmethod
+    def __setup__(cls):
+        super(Template, cls).__setup__()
+        # replace m2o field from stock_lot to MultiValue
+        cls.lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
+                'Lot Sequence', domain=[
+                    ('sequence_type', '=', Id('stock_lot',
+                            'sequence_type_stock_lot')),
+                    ('company', 'in',
+                        [Eval('context', {}).get('company', -1), None]),
+                    ],
+                states={
+                    'invisible': ~Eval('context', {}).get('company'),
+                    }))
