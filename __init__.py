@@ -13,5 +13,6 @@ def register():
         product.Category,
         product.TemplateCompany,
         product.Template,
+        product.Product,
         stock.Lot,
         module='stock_lot_sequence', type_='model')
