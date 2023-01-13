@@ -123,3 +123,7 @@ class Template(metaclass=PoolMeta):
                 states={
                     'invisible': ~Eval('context', {}).get('company'),
                     }))
+
+
+class Product(metaclass=PoolMeta):
+    __name__ = 'product.product'
