@@ -39,7 +39,7 @@ class CategoryCompany(ModelSQL, CompanyValueMixin):
     __name__ = 'product.category.lot_sequence'
     category = fields.Many2One('product.category', 'Category', required=True,
         ondelete='CASCADE', context={
-            'company': Eval('company'),
+            'company': Eval('company', -1),
             },
         depends=['company'])
     lot_sequence = fields.Many2One(
@@ -82,7 +82,7 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
     __name__ = 'product.template.lot_sequence'
     template = fields.Many2One('product.template', 'Template', required=True,
         ondelete='CASCADE', context={
-            'company': Eval('company'),
+            'company': Eval('company', -1),
             },
         depends=['company'])
     lot_sequence = fields.Many2One(
