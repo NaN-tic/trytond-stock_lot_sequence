@@ -18,6 +18,7 @@ class Lot(metaclass=PoolMeta):
     def create(cls, vlist):
         pool = Pool()
         Product = pool.get('product.product')
+        vlist = [x.copy() for x in vlist]
         for values in vlist:
             if values.get('number') and len(values['number']) > 0:
                 continue
