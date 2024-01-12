@@ -48,8 +48,7 @@ class CategoryCompany(ModelSQL, CompanyValueMixin):
             ('sequence_type', '=', Id('stock_lot',
                     'sequence_type_stock_lot')),
             ('company', 'in', [Eval('company', -1), None]),
-            ],
-        depends=['company'])
+            ])
 
     @classmethod
     def __register__(cls, module_name):
@@ -91,8 +90,7 @@ class TemplateCompany(ModelSQL, CompanyValueMixin):
             ('sequence_type', '=', Id('stock_lot',
                     'sequence_type_stock_lot')),
             ('company', 'in', [Eval('company', -1), None]),
-            ],
-        depends=['company'])
+            ])
 
     @classmethod
     def __register__(cls, module_name):
