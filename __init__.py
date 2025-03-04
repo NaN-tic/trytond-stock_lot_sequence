@@ -11,5 +11,6 @@ def register():
         product.ConfigurationDefaultLotSequence,
         product.CategoryCompany,
         product.Category,
+        product.Template,
         stock.Lot,
         module='stock_lot_sequence', type_='model')
