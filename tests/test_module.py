@@ -54,12 +54,16 @@ class StockLotSequenceTestCase(CompanyTestMixin, ModuleTestCase):
 
             sequence_type = SequenceType(ModelData.get_id('stock_lot',
                     'sequence_type_stock_lot'))
-            cat_sequence = Sequence(sequence_type=sequence_type,
+            cat_sequence = Sequence(
+                sequence_type=sequence_type,
+                company=None,
                 name='Category Sequence')
             cat_sequence.save()
             sequence_type = SequenceType(ModelData.get_id('stock_lot',
                     'sequence_type_stock_lot'))
-            tem_sequence = Sequence(sequence_type=sequence_type,
+            tem_sequence = Sequence(
+                sequence_type=sequence_type,
+                company=None,
                 name='Template Sequence')
             tem_sequence.save()
 

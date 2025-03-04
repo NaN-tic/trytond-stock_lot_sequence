@@ -45,9 +45,8 @@ class CategoryCompany(ModelSQL, CompanyValueMixin):
     lot_sequence = fields.Many2One(
         'ir.sequence', 'Lot Sequence',
         domain=[
-            ('sequence_type', '=', Id('stock_lot',
-                    'sequence_type_stock_lot')),
-            ('company', 'in', [Eval('company', -1), None]),
+            ('sequence_type', '=', Id('stock_lot', 'sequence_type_stock_lot')),
+            ('company', '=', None),
             ])
 
     @classmethod
@@ -56,72 +55,15 @@ class CategoryCompany(ModelSQL, CompanyValueMixin):
 
         if exist:
             backend.TableHandler.table_rename('product_category_company', cls._table)
-        super(CategoryCompany, cls).__register__(module_name)
+        super().__register__(module_name)
 
 
 class Category(CompanyMultiValueMixin, metaclass=PoolMeta):
     __name__ = 'product.category'
     lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
-            'Lot Sequence', domain=[
-                ('sequence_type', '=', Id('stock_lot',
-                        'sequence_type_stock_lot')),
-                ('company', 'in',
-                    [Eval('context', {}).get('company', -1), None]),
-                ],
-            states={
-                'invisible': ~Eval('context', {}).get('company'),
-                }))
-
+        'Lot Sequence', domain=[
+            ('sequence_type', '=', Id('stock_lot', 'sequence_type_stock_lot')),
+            ('company', '=', None),
+            ]))
     lot_sequences = fields.One2Many('product.category.lot_sequence',
         'category', 'Lot Sequences')
-
-
-class TemplateCompany(ModelSQL, CompanyValueMixin):
-    'Template per Company'
-    __name__ = 'product.template.lot_sequence'
-    template = fields.Many2One('product.template', 'Template', required=True,
-        ondelete='CASCADE', context={
-            'company': Eval('company', -1),
-            },
-        depends=['company'])
-    lot_sequence = fields.Many2One(
-        'ir.sequence', 'Lot Sequence',
-        domain=[
-            ('sequence_type', '=', Id('stock_lot',
-                    'sequence_type_stock_lot')),
-            ('company', 'in', [Eval('company', -1), None]),
-            ])
-
-    @classmethod
-    def __register__(cls, module_name):
-        exist = backend.TableHandler.table_exist('product_template_company')
-
-        if exist:
-            backend.TableHandler.table_rename('product_template_company',
-                cls._table)
-        super(TemplateCompany, cls).__register__(module_name)
-
-
-class Template(metaclass=PoolMeta):
-    __name__ = 'product.template'
-    lot_sequences = fields.One2Many('product.template.lot_sequence',
-        'template', 'Lot Sequences')
-
-    @classmethod
-    def __setup__(cls):
-        super(Template, cls).__setup__()
-        # replace m2o field from stock_lot to MultiValue
-        cls.lot_sequence = fields.MultiValue(fields.Many2One('ir.sequence',
-                'Lot Sequence', domain=[
-                    ('sequence_type', '=', Id('stock_lot',
-                            'sequence_type_stock_lot')),
-                    ('company', 'in',
-                        [Eval('context', {}).get('company', -1), None]),
-                    ],
-                states={
-                    'invisible': ~Eval('context', {}).get('company'),
-                    }))
-
-
-class Product(metaclass=PoolMeta):
-    __name__ = 'product.product'
