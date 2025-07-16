@@ -1,14 +1,6 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
-
-msgctxt "error:stock.lot:"
-msgid ""
-"No sequence defined for lot. You must define a sequence or enter lot's "
-"number."
-msgstr ""
-"No s'ha definit cap seqüencia pels lots. Heu de definir una seqüencia o "
-"introduir un número de lot."
 
 msgctxt "field:product.category,lot_sequence:"
 msgid "Lot Sequence"
