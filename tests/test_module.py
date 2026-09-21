@@ -119,5 +119,40 @@ class StockLotSequenceTestCase(CompanyTestMixin, ModuleTestCase):
             self.assertEqual([l.number for l in lots], [str(x) for x
                     in range(1, 4)])
 
+            # Explicit numbers and writes must not consume the sequence.
+            manual, = Lot.create([{
+                        'product': product.id,
+                        'number': 'MANUAL',
+                        }])
+            Lot.write([manual], {'number': 'UPDATED'})
+            self.assertEqual(manual.number, 'UPDATED')
+
+            values = {'product': product.id, 'number': ''}
+            automatic, = Lot.create([values])
+            self.assertEqual(automatic.number, '4')
+            self.assertEqual(values, {'product': product.id, 'number': ''})
+
+            copied, = Lot.copy([automatic])
+            self.assertEqual(copied.number, '5')
+
+            # Copies also use the category fallback without a product sequence.
+            template.lot_sequence = None
+            template.save()
+            copied, = Lot.copy([automatic])
+            self.assertEqual(copied.number, '6')
+
+            # Without a sequence, leave number handling to the core.
+            category.lot_sequence = None
+            category.save()
+            Configuration = pool.get('product.configuration')
+            configuration = Configuration(1)
+            configuration.default_lot_sequence = None
+            configuration.save()
+            self.assertIsNone(Lot.calc_number(product))
+            for number_values in ({}, {'number': ''}, {'number': 'MANUAL'}):
+                values = {'product': product.id, **number_values}
+                self.assertEqual(
+                    Lot.preprocess_values('create', values), values)
+
 
 del ModuleTestCase
