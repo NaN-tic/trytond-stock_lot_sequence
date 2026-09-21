@@ -1,30 +1,25 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond.pool import Pool, PoolMeta
-from trytond.i18n import gettext
-from trytond.exceptions import UserError
 
 
 class Lot(metaclass=PoolMeta):
     __name__ = 'stock.lot'
 
     @classmethod
-    def __setup__(cls):
-        super(Lot, cls).__setup__()
-        if cls.number.required:
-            cls.number.required = False
-
-    @classmethod
-    def create(cls, vlist):
-        pool = Pool()
-        Product = pool.get('product.product')
-        vlist = [x.copy() for x in vlist]
-        for values in vlist:
-            if values.get('number') and len(values['number']) > 0:
-                continue
-            values['number'] = cls.calc_number(Product(values['product']),
-                lot_values=values)
-        return super(Lot, cls).create(vlist)
+    def preprocess_values(cls, mode, values):
+        values = values.copy()
+        if mode == 'create' and not values.get('number'):
+            product_id = values.get('product')
+            if product_id is not None:
+                Product = Pool().get('product.product')
+                # Resolve category and configuration fallbacks before the core
+                # generates a number from the product sequence.
+                number = cls.calc_number(
+                    Product(product_id), lot_values=values)
+                if number:
+                    values['number'] = number
+        return super().preprocess_values(mode, values)
 
     @classmethod
     def copy(cls, lots, default=None):
@@ -49,7 +44,5 @@ class Lot(metaclass=PoolMeta):
                     sequence = category.lot_sequence
                     break
             else:
-                if not config.default_lot_sequence:
-                    raise UserError(gettext('stock_lot_sequence.no_sequence'))
                 sequence = config.default_lot_sequence
-        return sequence.get()
+        return sequence.get() if sequence else None
